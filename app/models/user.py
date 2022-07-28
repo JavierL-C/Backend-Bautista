@@ -23,8 +23,8 @@ class User(Base):
 
     user_id=Column(Integer, primary_key=True)
     user_name=Column(String)
-    user_password=Column(String)
     user_email=Column(String)
+    user_password=Column(String)
     user_id_rol=Column(Integer, ForeignKey("roles.roles_id"))
     user_status=Column(String)
     user_creation_date=Column(DateTime)
