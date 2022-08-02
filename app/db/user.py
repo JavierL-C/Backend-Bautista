@@ -41,3 +41,9 @@ def update_user(db:Session, user: RequestUser, user_id: int):
     db.commit()
     db.refresh(_user)
     return _user
+
+def remove_user(db:Session, user_id: int):
+    _user = get_user_by_id(db=db, user_id=user_id)
+    db.delete(_user)
+    db.commit()
+

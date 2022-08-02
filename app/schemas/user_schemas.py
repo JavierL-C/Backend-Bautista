@@ -33,7 +33,7 @@ class UserResponse(GenericModel, Generic[T]):
     result: Optional[T]
     
 class LoginModel(BaseModel):
-    user_email : Optional[str]=None
+    user_email: Optional[str]=None
     user_password: Optional[str]=None
     pass
 

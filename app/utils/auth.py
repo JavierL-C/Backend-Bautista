@@ -1,9 +1,11 @@
+from base64 import decode
 from datetime import datetime
 import bcrypt
 import jwt
-import os
+from decouple import config
 
-secret_pass = os.getenv("SECRET_PASS", "0000")
+secret_pass = config('SECRET_PASS')
+secret_algorithm = config('ALGORITHM')
 
 class Encrypter:
     @classmethod
@@ -23,5 +25,15 @@ class Encrypter:
 def generate_jwt(payload : dict[str , any]) -> str :
     time_int_unix = int(datetime.utcnow().timestamp())
     payload["exp"] = time_int_unix + 60
-    token : str = jwt.encode(payload, secret_pass, algorithm= "HS256")
+    token : str = jwt.encode(payload, secret_pass, algorithm= secret_algorithm)
     return token
+
+def validate_token(token, output=False):
+    try:
+        if output:
+           user_name = jwt.decode(token, key=secret_pass, algorithms= [secret_algorithm])
+           return user_name.get("user_name")
+    except jwt.exceptions.DecodeError:
+        return "Invalid token"
+    except jwt.exceptions.ExpiredSignatureError:
+        return "Invalid token"
