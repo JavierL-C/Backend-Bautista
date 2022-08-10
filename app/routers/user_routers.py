@@ -1,11 +1,8 @@
-from urllib import response
-from fastapi import APIRouter, HTTPException, Header, Path, Depends, status
-from requests import session
-from sqlalchemy import null
+from fastapi import APIRouter, Header, Depends
 from sqlalchemy.orm import Session
 
 from app.db.config import SessionLocal
-from app.schemas.user_schemas import UserSchema, RequestUser, UserResponse, RequestLogin
+from app.schemas.user_schemas import RequestUser, UserResponse, RequestLogin
 from app.db import user
 from app.utils.auth import Encrypter
 from app.utils import auth
@@ -125,4 +122,4 @@ async def update_user(user_id, db:Session=Depends(get_db), Authorization: str = 
         user.remove_user(db=db, user_id=user_id)
         return UserResponse(code=200, status="ok",message="success delete user")
     except:
-         return UserResponse(code=401, status="fail",message="Invalid token")
+        return UserResponse(code=401, status="fail",message="Invalid token")

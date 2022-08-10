@@ -1,13 +1,10 @@
-from turtle import pos
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends
 from requests import Session
 
 from app.db.config import SessionLocal
 from app.db import post
 from app.schemas.post_schemas import PostResponse, RequestPost
 from app.schemas.user_schemas import UserResponse
-from app.utils import auth
-from app.db import user
 
 router = APIRouter()
 
