@@ -1,8 +1,8 @@
-from pickle import FALSE
 from sqlalchemy.orm import Session
 from datetime import datetime
 from app.models.user import Post
 from app.schemas.post_schemas import RequestPost
+import base64
 
 def get_post(db:Session, skip:int=0, limit:int=1):
     return db.query(Post).offset(skip).limit(limit).all()
@@ -14,7 +14,7 @@ def create_post(db:Session, post:RequestPost):
         post_create_date = datetime.now(),
         post_update_date = datetime.now(),
         post_user_id = post.parameter.post_user_id,
-        post_image = post.parameter.post_image,
+        post_image = base64.b64encode(post.parameter.post_image),
     )
     db.add(_post)
     db.commit()
