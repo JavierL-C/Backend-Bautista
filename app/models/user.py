@@ -32,6 +32,7 @@ class Post(Base):
    __tablename__= "posts"
 
    post_id=Column(Integer, primary_key=True)
+   post_title=Column(String)
    post_content=Column(String)
    post_is_approved=Column(Boolean)
    post_create_date=Column(DateTime)

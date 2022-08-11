@@ -1,4 +1,5 @@
 from pickle import FALSE
+from turtle import pos
 from sqlalchemy.orm import Session
 from datetime import datetime
 from app.models.user import Post
@@ -11,6 +12,7 @@ def create_post(db:Session, post:RequestPost):
     _post = Post(
         post_content = post.parameter.post_content,
         post_is_approved = False,
+        post_title = post.parameter.post_title,
         post_create_date = datetime.now(),
         post_update_date = datetime.now(),
         post_user_id = post.parameter.post_user_id,
@@ -28,6 +30,7 @@ def get_post_by_id(db:Session, post_id:int):
 def update_post(db:Session, post:RequestPost, post_id:int):
     _post = get_post_by_id(db=db, post_id=post_id)
     _post.post_content = post.parameter.post_content
+    _post.post_title = post.parameter.post_title,
     _post.post_is_approved = post.parameter.post_is_approved
     _post.post_user_id = post.parameter.post_user_id
     _post.post_image = post.parameter.post_image
