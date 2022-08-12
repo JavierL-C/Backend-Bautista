@@ -32,6 +32,7 @@ class Post(Base):
    __tablename__= "posts"
 
    post_id=Column(Integer, primary_key=True)
+   post_title=Column(String)
    post_content=Column(String)
    post_is_approved=Column(Boolean)
    post_create_date=Column(DateTime)
@@ -46,7 +47,7 @@ class Comment(Base):
 
     comment_id=Column(Integer, primary_key=True)
     comment_content=Column(String)
-    comment_is_approved=Column(Boolean)
     comment_create_date=Column(DateTime)
     comment_author=Column(String)
-    comment_post_id=Column(Integer, ForeignKey("posts.post_id"))
+    #comment_post_id=Column(Integer, ForeignKey("posts.post_id"))
+    comment_is_approved=Column(Boolean)

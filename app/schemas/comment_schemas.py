@@ -7,7 +7,7 @@ T = TypeVar("T")
 
 class CommentSchema(BaseModel):
     comment_content:Optional[str]=None
-    comment_is_approved:Optional[bool]=false
+    comment_is_approved:Optional[bool]=False
     comment_author:Optional[str]=None
     comment_post_id:Optional[int]=Field(default=None, foreign_key="posts.post_id")
 

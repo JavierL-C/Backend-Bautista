@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends
-from requests import Session
+from turtle import pos
+from urllib import response
+from fastapi import APIRouter, Depends, Path, Header, status
+from sqlalchemy.orm import Session
 
 from app.db.config import SessionLocal
 from app.db import post
@@ -34,14 +36,8 @@ async def get(db:Session=Depends(get_db)):
 @router.get("/{post_id}")
 async def get_post(post_id, db:Session=Depends(get_db)):
     try:
-        intId = int(post_id)
-        _post = post.get_post_by_id(db, intId)
-        return PostResponse(
-            code=200,
-            status='ok',
-            message='Success fetch post',
-            result=_post
-        )
+        _post = post.get_post_by_id(db, 1)
+        return PostResponse(code=200, status='ok', message='Success fetch post', result=_post)
     finally:
         return PostResponse(
             code=401,
@@ -55,20 +51,16 @@ async def update_post(post_id, request:RequestPost, db:Session=Depends(get_db)):
         intId = int(post_id)
 
         exist_post = post.get_post_by_id(db, intId)
-        if exist_post != None:
-            return PostResponse(
-                code=200,
-                status="ok",
-                message="Another post already has that email"
-            )
+        if exist_post == None:
+            return PostResponse(code=404, status="fail",message="Post not found")
 
-        _post = post.update_post(db, request, intId)
-
-        if _post is None:
+        try:
+            _post = post.update_post(db, request, intId)
+        except:
             return PostResponse(
                 code=404,
-                status="Fail",
-                message="post not found",
+                status="fail",
+                message="post can not be updating",
                 result=_post
             )
 
@@ -113,15 +105,6 @@ async def update_post(post_id, db:Session=Depends(get_db)):
 async def create(request:RequestPost, db:Session=Depends(get_db)):
     _new_post = post.create_post(db, request)
     if _new_post is None:
-        return PostResponse(
-            code=404,
-            status="fail",
-            message="Post can not be create"
-        )
+        return  UserResponse(code=404, status="fail", message="Post can not be create")
 
-    return PostResponse(
-        code=200,
-        status="ok",
-        message="Post was create successfully",
-        result=_new_post
-    ).dict(exclude_none=True)
+    return UserResponse(code=200, status="ok", message="Post was create successfully", result=_new_post).dict(exclude_none=True)
