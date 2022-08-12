@@ -5,7 +5,6 @@ from app.routers import post_routers, user_routers, comment_routers
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 
-# user.Base.metadata.drop_all(bind=engine)
 user.Base.metadata.create_all(bind=engine)
 
 load_dotenv()
