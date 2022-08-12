@@ -91,17 +91,17 @@ async def update_user(request: RequestUser, user_id, db:Session=Depends(get_db),
 
         intId = int(user_id)
 
-        exist_user = user.get_user_by_email(db, request.parameter.user_email)
-        if exist_user != None:
-            return UserResponse(code=200, status="ok",message="Another user already has that email")
+        exist_user = user.get_user_by_id(db, intId)
+        if exist_user == None:
+            return UserResponse(code=200, status="fail",message="User not found")
 
         _user = user.update_user(db, request, intId)
-
-        if _user is None:
+  
+        if _user == None:
             return UserResponse(
                 code=404,
                 status="Fail",
-                message="User not found",
+                message="Can not be updating",
                 result=_user
             )
         
