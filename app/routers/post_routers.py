@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.db.config import SessionLocal
 from app.db import post
 from app.schemas.post_schemas import PostResponse, RequestPost
+from app.schemas.user_schemas import UserResponse
 
 router = APIRouter()
 
