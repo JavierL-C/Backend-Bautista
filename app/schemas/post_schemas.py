@@ -9,8 +9,8 @@ T = TypeVar("T")
 class PostSchema(BaseModel):
     post_content: Optional[str]=None
     post_title: Optional[str]=None
-    post_is_approved: Optional[bool]=false
-    post_user_id: Optional[int]= Field(default=None, foreign_key="users.user_id")
+    post_is_approved: Optional[bool]=False
+    post_user_id: Optional[int]=Field(default=None, foreign_key="users.user_id")
     post_image: Optional[str]=None
 
     class Config:

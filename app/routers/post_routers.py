@@ -1,6 +1,7 @@
 from turtle import pos
-from fastapi import APIRouter, Depends, Header
-from requests import Session
+from urllib import response
+from fastapi import APIRouter, Depends, Path, Header, status
+from sqlalchemy.orm import Session
 
 from app.db.config import SessionLocal
 from app.db import post
@@ -39,18 +40,17 @@ async def update_post(request: RequestPost, post_id, db:Session=Depends(get_db))
     try:
         intId = int(post_id)
 
-        exist_post = post.get_post_by_id(db, request.parameter.post_email)
-        if exist_post != None:
-            return PostResponse(code=200, status="ok",message="Another post already has that email")
+        exist_post = post.get_post_by_id(db, intId)
+        if exist_post == None:
+            return PostResponse(code=404, status="fail",message="Post not found")
 
-        _post = post.update_post(db, request, intId)
-
-        if _post is None:
+        try:
+            _post = post.update_post(db, request, intId)
+        except:
             return PostResponse(
                 code=404,
-
-                status="Fail",
-                message="post not found",
+                status="fail",
+                message="post can not be updating",
                 result=_post
             )
 
