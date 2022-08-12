@@ -14,7 +14,7 @@ def create_post(db:Session, post:RequestPost):
         post_create_date = datetime.now(),
         post_update_date = datetime.now(),
         post_user_id = post.parameter.post_user_id,
-        post_image = base64.b64encode(post.parameter.post_image),
+        post_image = base64.b64encode(post.parameter.post_image)
     )
     db.add(_post)
     db.commit()
@@ -30,7 +30,7 @@ def update_post(db:Session, post:RequestPost, post_id:int):
     _post.post_content = post.parameter.post_content
     _post.post_is_approved = post.parameter.post_is_approved
     _post.post_user_id = post.parameter.post_user_id
-    _post.post_image = post.parameter.post_image
+    _post.post_image = base64.b64encode(post.parameter.post_image)
     _post.post_update_date = datetime.now()
     db.commit()
     db.refresh(_post)
