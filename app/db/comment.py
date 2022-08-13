@@ -25,6 +25,9 @@ def get_comment_by_id(db:Session, comment_id:int):
 def get_comment_by_post(db:Session, post_id:int):
     return db.query(Comment).filter(Comment.comment_post_id==post_id).all()
 
+def get_comment_by_post_and_comment(db:Session, post_id:int, is_approved:bool):
+    return db.query(Comment).filter(Comment.comment_post_id==post_id or Comment.comment_is_approved==is_approved).all()
+
 def update_comment(db:Session, comment:RequestComment, comment_id:int):
     _comment=get_comment_by_id(db=db, comment_id=comment_id)
     _comment.comment_content=comment.parameter.comment_content
