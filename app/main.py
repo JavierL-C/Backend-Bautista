@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from app.models import user
 from app.db.config import engine
-from app.routers import post_routers, user_routers
+from app.routers import post_routers, user_routers, email_routers
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+
 
 # user.Base.metadata.drop_all(engine)
 user.Base.metadata.create_all(bind=engine)
@@ -25,9 +26,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get('/')
 async def Home():
     return "Welcome Home"
 
-app.include_router(user_routers.router,prefix="/user", tags=["user"])
-app.include_router(post_routers.router,prefix="/post", tags=["post"])
+app.include_router(user_routers.router, prefix="/user", tags=["user"])
+app.include_router(post_routers.router, prefix="/post", tags=["post"])
+app.include_router(email_routers.router, prefix="/email", tags=["email"])
