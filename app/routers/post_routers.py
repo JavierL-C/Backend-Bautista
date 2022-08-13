@@ -25,7 +25,7 @@ async def get(db:Session=Depends(get_db)):
         _post = post.get_post(db, 0, 100)
         return PostResponse(code=200, status="ok",message="Success fetch all data", result=_post)
     except:
-         return PostResponse(code=401, status="fail",message="Invalid token")
+         return PostResponse(code=401, status="fail",message="Something was wrong")
 
 @router.get("/{post_id}")
 async def get_post(db:Session=Depends(get_db)):
