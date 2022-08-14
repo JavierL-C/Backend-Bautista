@@ -1,6 +1,6 @@
 from xmlrpc.client import DateTime
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import ARRAY, BYTEA
 
 from app.db.config import Base
 
@@ -38,7 +38,7 @@ class Post(Base):
    post_create_date=Column(DateTime)
    post_update_date=Column(DateTime)
    post_user_id=Column(Integer, ForeignKey("users.user_id"))
-   post_image=Column(String)
+   post_image=Column(ARRAY(BYTEA))
 
 #    user = relationship("User", back_populates="post")
 
