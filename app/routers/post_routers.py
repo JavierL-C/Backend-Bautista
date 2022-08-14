@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.db.config import SessionLocal
@@ -18,12 +19,14 @@ def get_db():
 @router.get("/")
 async def get(db:Session=Depends(get_db)):
     try:
-        _post = post.get_post(db, 0, 100)
+        _posts = post.get_post(db, 0, 100)
+        for _post in _posts:
+            _post.post_image = await get_post_image_by_id(_post.post_id, db)
         return PostResponse(
             code=200,
             status="ok",
             message="Success fetch all data",
-            result=_post
+            result=_posts
         )
     except:
         return PostResponse(
@@ -110,13 +113,15 @@ async def get_post(post_id, db:Session=Depends(get_db)):
     try:
         intId = int(post_id)
         _post = post.get_post_by_id(db, intId)
+        _post.post_image = await get_post_image_by_id(intId, db)
+        print(_post.post_image)
         return PostResponse(
             code=200,
             status='ok',
             message='Success fetch post',
             result=_post
         )
-    finally:
+    except:
         return PostResponse(
             code=401,
             status="fail",
@@ -199,3 +204,7 @@ async def create(image:UploadFile, request:PostSchema=Depends(PostSchema.as_form
         message="Post was create successfully",
         # result=_new_post
     ).dict(exclude_none=True)
+
+@router.get('/image/{post_id}')
+async def get_post_image_by_id(post_id, db:Session=Depends(get_db)):
+    return FileResponse('Hongo.jpg')
