@@ -52,3 +52,4 @@ class Comment(Base):
     comment_author=Column(String)
     comment_post_id=Column(Integer, ForeignKey("posts.post_id"))
     comment_is_approved=Column(Boolean)
+    comment_post_title=Column(String)

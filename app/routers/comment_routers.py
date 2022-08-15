@@ -21,6 +21,14 @@ async def get(db:Session=Depends(get_db)):
     except:
         return CommentResponse(code=401, status="fail",message="Something was wrong")
 
+@router.get("/left/to/approve")
+async def get(db:Session=Depends(get_db)):
+    try:
+        _comments = comment.get_comment_left_to_approve(db)
+        return CommentResponse(code=200, status="ok", message="Success fetch data", result=_comments).dict(exclude_none=True)
+    except:
+        return CommentResponse(code=401, status="fail",message="Something was wrong")
+
 @router.get("/{post_id}")
 async def get_comment(post_id, db:Session=Depends(get_db)):
     try:

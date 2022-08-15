@@ -2,14 +2,17 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models.user import Comment
 from app.schemas.comment_schemas import RequestComment, CommentSchema
+from app.db import post
 
 def create_comment(db:Session, comment:RequestComment):
+    _post = post.get_post_by_id(db,comment.parameter.comment_post_id)
     _comment = Comment(
         comment_content=comment.parameter.comment_content,
         comment_is_approved=comment.parameter.comment_is_approved,
         comment_author=comment.parameter.comment_author,
         comment_create_date=datetime.now(),
-        comment_post_id=comment.parameter.comment_post_id
+        comment_post_id=comment.parameter.comment_post_id,
+        comment_post_title=_post.__dict__['post_title']
     )
     db.add(_comment)
     db.commit()
@@ -27,6 +30,9 @@ def get_comment_by_post(db:Session, post_id:int):
 
 def get_comment_by_post_and_comment(db:Session, post_id:int, is_approved:bool):
     return db.query(Comment).filter(Comment.comment_post_id==post_id or Comment.comment_is_approved==is_approved).all()
+
+def get_comment_left_to_approve(db:Session):
+    return db.query(Comment).filter(Comment.comment_is_approved==False).all()
 
 def update_comment(db:Session, comment:RequestComment, comment_id:int):
     _comment=get_comment_by_id(db=db, comment_id=comment_id)
