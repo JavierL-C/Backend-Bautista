@@ -29,7 +29,7 @@ def get_comment_by_post(db:Session, post_id:int):
     return db.query(Comment).filter(Comment.comment_post_id==post_id).all()
 
 def get_comment_by_post_and_comment(db:Session, post_id:int, is_approved:bool):
-    return db.query(Comment).filter(Comment.comment_post_id==post_id or Comment.comment_is_approved==is_approved).all()
+    return db.query(Comment).filter(Comment.comment_post_id==post_id).filter(Comment.comment_is_approved==is_approved).all()
 
 def get_comment_left_to_approve(db:Session):
     return db.query(Comment).filter(Comment.comment_is_approved==False).all()

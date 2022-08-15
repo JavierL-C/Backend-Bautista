@@ -36,6 +36,7 @@ class PostCommentSchema(BaseModel):
         default=None, foreign_key="users.user_id")
     post_create_date: Optional[date] = None
     post_update_date: Optional[date] = None
+    post_content_html: Optional[str] = None
     post_comments: Union[list, None] = None
 
 

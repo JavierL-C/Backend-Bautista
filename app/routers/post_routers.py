@@ -57,6 +57,7 @@ async def get(post_id, db: Session = Depends(get_db)):
             post_user_id=_post.__dict__['post_user_id'],
             post_create_date=_post.__dict__['post_create_date'],
             post_update_date=_post.__dict__['post_update_date'],
+            post_content_html=_post.__dict__['post_content_html'],
             post_comments=_comment
         )
 
@@ -95,6 +96,7 @@ async def get(post_id, is_approved, db: Session = Depends(get_db)):
             post_user_id=_post.__dict__['post_user_id'],
             post_create_date=_post.__dict__['post_create_date'],
             post_update_date=_post.__dict__['post_update_date'],
+            post_content_html=_post.__dict__['post_content_html'],
             post_comments=_comment
         )
 
