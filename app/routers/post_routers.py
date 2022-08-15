@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+from io import BytesIO
 
 from app.db.config import SessionLocal
 from app.db import post
@@ -8,7 +9,6 @@ from app.db import comment
 from app.schemas.post_schemas import PostCommentSchema, PostResponse, PostSchema
 
 router = APIRouter()
-
 
 def get_db():
     db = SessionLocal()
@@ -215,6 +215,12 @@ async def create(image: UploadFile, request: PostSchema = Depends(PostSchema.as_
     ).dict(exclude_none=True)
 
 
-@router.get('/image/{post_id}')
-async def get_post_image_by_id(post_id, db: Session = Depends(get_db)):
-    return FileResponse('Hongo.jpg')
+@router.get('/get/image/{post_id}')
+async def get_post_image_by_id(post_id, db:Session=Depends(get_db)):
+    intId = int(post_id)
+    _post = post.get_post_by_id(db, intId)
+    imageBytes = bytes()
+    for byte in _post.post_image:
+        imageBytes = imageBytes + bytes(byte)
+    foo = BytesIO(initial_bytes=imageBytes)
+    return StreamingResponse(foo, media_type="image/jpeg")
