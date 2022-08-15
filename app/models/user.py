@@ -38,6 +38,7 @@ class Post(Base):
    post_create_date=Column(DateTime)
    post_update_date=Column(DateTime)
    post_user_id=Column(Integer, ForeignKey("users.user_id"))
+   post_content_html=Column(String)
    post_image=Column(ARRAY(BYTEA))
 
 #    user = relationship("User", back_populates="post")

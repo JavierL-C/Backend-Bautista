@@ -10,17 +10,19 @@ class PostSchema(BaseModel):
     post_title: Optional[str]=None
     post_is_approved: Optional[bool]=False
     post_user_id: Optional[int]=Field(default=None, foreign_key="users.user_id")
+    post_content_html: Optional[str]=None
 
     class Config:
         orm_mode = True
 
     @classmethod
-    def as_form(cls, post_content:str, post_title:str, post_is_approved:bool, post_user_id:int) -> 'PostSchema':
+    def as_form(cls, post_content:str, post_title:str, post_is_approved:bool, post_user_id:int, post_content_html:str) -> 'PostSchema':
         return cls(
             post_content=post_content,
             post_title=post_title,
             post_is_approved=post_is_approved,
-            post_user_id=post_user_id
+            post_user_id=post_user_id,
+            post_content_html=post_content_html
         )
 
 class PostCommentSchema(BaseModel):

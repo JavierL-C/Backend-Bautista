@@ -14,6 +14,7 @@ def create_post(db:Session, post:PostSchema, image:bytes):
         post_create_date = datetime.now(),
         post_update_date = datetime.now(),
         post_user_id = post.post_user_id,
+        post_content_html = post.post_content_html,
         post_image = image
     )
     db.add(_post)
