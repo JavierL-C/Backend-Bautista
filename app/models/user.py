@@ -39,9 +39,15 @@ class Post(Base):
    post_update_date=Column(DateTime)
    post_user_id=Column(Integer, ForeignKey("users.user_id"))
    post_content_html=Column(String)
-   post_image=Column(ARRAY(BYTEA))
 
 #    user = relationship("User", back_populates="post")
+
+class Image(Base):
+    __tablename__= "images"
+
+    image_id=Column(Integer, primary_key=True)
+    image=Column(ARRAY(BYTEA))
+    image_post_id=Column(Integer, ForeignKey("posts.post_id"))
 
 class Comment(Base):
     __tablename__ = "comments"

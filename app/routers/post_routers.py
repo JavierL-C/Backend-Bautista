@@ -1,11 +1,13 @@
+from ast import Or
 from fastapi import APIRouter, Depends, UploadFile
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from io import BytesIO
 
 from app.db.config import SessionLocal
-from app.db import post
+from app.db import post, image
 from app.db import comment
+from ..models.user import Image
 from app.schemas.post_schemas import PostCommentSchema, PostResponse, PostSchema
 
 router = APIRouter()
@@ -22,8 +24,6 @@ def get_db():
 async def get(db: Session = Depends(get_db)):
     try:
         _posts = post.get_post(db, 0, 100)
-        for _post in _posts:
-            _post.post_image = await get_post_image_by_id(_post.post_id, db)
         return PostResponse(
             code=200,
             status="ok",
@@ -119,8 +119,6 @@ async def get_post(post_id, db: Session = Depends(get_db)):
     try:
         intId = int(post_id)
         _post = post.get_post_by_id(db, intId)
-        _post.post_image = await get_post_image_by_id(intId, db)
-        print(_post.post_image)
         return PostResponse(
             code=200,
             status='ok',
@@ -136,7 +134,7 @@ async def get_post(post_id, db: Session = Depends(get_db)):
 
 
 @router.post('/update/{post_id}')
-async def update_post(post_id, image: UploadFile, request: PostSchema = Depends(PostSchema.as_form), db: Session = Depends(get_db)):
+async def update_post(post_id, image_file: UploadFile, request: PostSchema = Depends(PostSchema.as_form), db: Session = Depends(get_db)):
     try:
         intId = int(post_id)
 
@@ -149,7 +147,8 @@ async def update_post(post_id, image: UploadFile, request: PostSchema = Depends(
             )
 
         try:
-            _post = post.update_post(db, request, image.file, intId)
+            _post = post.update_post(db, request, intId)
+            image.update_image(db, _post.__dict__['post_id'], image_file.file)
         except:
             return PostResponse(
                 code=404,
@@ -198,29 +197,44 @@ async def delete_post(post_id, db: Session = Depends(get_db)):
 
 
 @router.post('/create')
-async def create(image: UploadFile, request: PostSchema = Depends(PostSchema.as_form), db: Session = Depends(get_db)):
-    _new_post = post.create_post(db, request, image.file)
-    if _new_post is None:
-        return PostResponse(
-            code=404,
-            status="fail",
-            message="Post can not be create"
-        )
+async def create(image_file: UploadFile, request: PostSchema = Depends(PostSchema.as_form), db: Session = Depends(get_db)):
+    try:
+        _new_post = post.create_post(db, request)
+        _image = image.create_Image(db, _new_post.post_id, image_file.file)
+        if _new_post is None:
+            return PostResponse(
+                code=404,
+                status="fail",
+                message="Post can not be create"
+            )
 
-    return PostResponse(
-        code=200,
-        status="ok",
-        message="Post was create successfully",
-        # result=_new_post
-    ).dict(exclude_none=True)
+        if _image is None:
+            return PostResponse(
+                code=404,
+                status="fail",
+                message="Image can not be create"
+            )
+
+        return PostResponse(
+            code=200,
+            status="ok",
+            message="Post was create successfully",
+            result=_new_post
+        )
+    except:
+        return PostResponse(
+            code=401,
+            status="fail",
+            message="Something was wrong",
+        )
 
 
 @router.get('/get/image/{post_id}')
 async def get_post_image_by_id(post_id, db:Session=Depends(get_db)):
     intId = int(post_id)
-    _post = post.get_post_by_id(db, intId)
+    _image = image.get_image(db, intId)
     imageBytes = bytes()
-    for byte in _post.post_image:
+    for byte in _image.__dict__['image']:
         imageBytes = imageBytes + bytes(byte)
     foo = BytesIO(initial_bytes=imageBytes)
     return StreamingResponse(foo, media_type="image/jpeg")
