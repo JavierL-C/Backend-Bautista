@@ -47,3 +47,9 @@ def remove_comment(db:Session, comment_id:int):
     _comment=get_comment_by_id(db=db, comment_id=comment_id)
     db.delete(_comment)
     db.commit()
+
+def remove_all_comment_from_post(db:Session, post_id:int):
+    _comments = db.query(Comment).filter(Comment.comment_post_id==post_id).all()
+    for _comment in _comments:
+        db.delete(_comment)
+        db.commit()

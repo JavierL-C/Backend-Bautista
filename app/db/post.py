@@ -38,5 +38,6 @@ def update_post(db:Session, post:PostSchema, post_id:int):
 
 def remove_post(db:Session, post_id:int):
     _post = get_post_by_id(db, post_id)
+    print(_post)
     db.delete(_post)
     db.commit()

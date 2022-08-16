@@ -166,7 +166,7 @@ async def update_post(post_id, image_file: UploadFile, request: PostSchema = Dep
         return PostResponse(
             code=401,
             status="fail",
-            message="Invalid token"
+            message="Something was wrong"
         )
 
 
@@ -181,7 +181,8 @@ async def delete_post(post_id, db: Session = Depends(get_db)):
                 status="ok",
                 message="the post does not exist"
             )
-
+        image.delete_image(db, intId)
+        comment.remove_all_comment_from_post(db, intId)
         post.remove_post(db, post_id)
         return PostResponse(
             code=200,
@@ -192,7 +193,7 @@ async def delete_post(post_id, db: Session = Depends(get_db)):
         return PostResponse(
             code=401,
             status="fail",
-            message="Invalid token"
+            message="Something was wrong"
         )
 
 
@@ -231,10 +232,33 @@ async def create(image_file: UploadFile, request: PostSchema = Depends(PostSchem
 
 @router.get('/get/image/{post_id}')
 async def get_post_image_by_id(post_id, db:Session=Depends(get_db)):
-    intId = int(post_id)
-    _image = image.get_image(db, intId)
-    imageBytes = bytes()
-    for byte in _image.__dict__['image']:
-        imageBytes = imageBytes + bytes(byte)
-    foo = BytesIO(initial_bytes=imageBytes)
-    return StreamingResponse(foo, media_type="image/jpeg")
+    try:
+        intId = int(post_id)
+
+        exist_post = post.get_post_by_id(db, intId)
+        if exist_post == None:
+            return PostResponse(
+                code=404,
+                status="fail",
+                message="Post not found"
+            )
+
+        _image = image.get_image(db, intId)
+        if _image == None:
+            return PostResponse(
+                code=404,
+                status="fail",
+                message="Image not found"
+            )
+
+        imageBytes = bytes()
+        for byte in _image.__dict__['image']:
+            imageBytes = imageBytes + bytes(byte)
+        foo = BytesIO(initial_bytes=imageBytes)
+        return StreamingResponse(foo, media_type="image/jpeg")
+    except:
+         return PostResponse(
+            code=401,
+            status="fail",
+            message="Something was wrong",
+        )
